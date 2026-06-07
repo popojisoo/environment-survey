@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import random
 
 st.set_page_config(page_title="환경 위험 인식 조사", page_icon="🌱")
 
@@ -62,3 +63,29 @@ if os.path.exists("responses.csv"):
     st.write("평균 행동 변화 의향:", round(data["행동 변화 의향"].mean(), 2))
 else:
     st.write("아직 응답이 없습니다.")
+
+st.markdown("---")
+st.subheader("🔒 관리자 전용 - 랜덤 추첨")
+
+admin_pw = st.text_input("관리자 비밀번호를 입력해 주세요", type="password")
+
+if admin_pw == "1226":
+    if os.path.exists("responses.csv"):
+        data = pd.read_csv("responses.csv")
+        names = data["이름"].dropna().tolist()
+
+        if len(names) < 5:
+            st.warning(f"응답자가 {len(names)}명으로 5명 미만입니다. 전체 명단에서 추첨합니다.")
+            draw_count = len(names)
+        else:
+            draw_count = 5
+
+        if st.button("🎲 추첨하기"):
+            winners = random.sample(names, draw_count)
+            st.success(f"🎉 당첨자 {draw_count}명")
+            for i, winner in enumerate(winners, 1):
+                st.write(f"{i}. {winner}")
+    else:
+        st.warning("아직 응답 데이터가 없습니다.")
+elif admin_pw != "":
+    st.error("비밀번호가 틀렸습니다.")
