@@ -87,13 +87,14 @@ if admin_pw == "1226":
                 st.write(f"{i}. {winner}")
     else:
         st.warning("아직 응답 데이터가 없습니다.")
-        st.markdown("---")
-        st.markdown("#### 🗑️ 데이터 초기화")
-        if st.button("전체 응답 데이터 삭제"):
-            if os.path.exists("responses.csv"):
-                os.remove("responses.csv")
-                st.success("응답 데이터가 초기화되었습니다.")
-            else:
-                st.info("삭제할 데이터가 없습니다.")
+
+    st.markdown("---")
+    st.markdown("#### 🗑️ 데이터 초기화")
+    if st.button("전체 응답 데이터 삭제"):
+        if os.path.exists("responses.csv"):
+            os.remove("responses.csv")
+            st.success("응답 데이터가 초기화되었습니다.")
+        else:
+            st.info("삭제할 데이터가 없습니다.")
 elif admin_pw != "":
     st.error("비밀번호가 틀렸습니다.")
