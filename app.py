@@ -72,7 +72,7 @@ admin_pw = st.text_input("관리자 비밀번호를 입력해 주세요", type="
 if admin_pw == "1226":
     if os.path.exists("responses.csv"):
         data = pd.read_csv("responses.csv")
-        names = data["이름"].dropna().tolist()
+        names = data["이름"].dropna().drop_duplicates().tolist()
 
         if len(names) < 5:
             st.warning(f"응답자가 {len(names)}명으로 5명 미만입니다. 전체 명단에서 추첨합니다.")
