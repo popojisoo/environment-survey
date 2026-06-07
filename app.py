@@ -1,0 +1,64 @@
+import streamlit as st
+import pandas as pd
+import os
+
+st.set_page_config(page_title="환경 위험 인식 조사", page_icon="🌱")
+
+st.title("🌱 환경 위험 인식 조사")
+st.subheader("프레이밍 효과와 음료수 캔 분리배출 문제")
+
+st.write("같은 환경 문제라도 표현 방식에 따라 심각하게 느껴지는 정도가 달라지는지 조사합니다.")
+
+name = st.text_input("이름을 입력해 주세요")
+
+st.markdown("### 📌 두 가지 표현을 읽고 선택해 주세요")
+
+st.info("A. 한 학년당 하루 평균 120개의 음료수 캔이 버려진다.")
+
+st.warning("B. 한 학년당 한 달 동안 약 2,400개의 음료수 캔이 버려진다.")
+
+choice = st.radio(
+    "어느 표현이 더 심각하게 느껴지나요?",
+    ["A", "B"]
+)
+
+score = st.slider(
+    "이 표현을 본 뒤 분리배출 행동을 바꾸고 싶은 정도는?",
+    1, 5, 3
+)
+
+if st.button("제출하기"):
+    if not name:
+        st.error("이름을 입력해 주세요.")
+        st.stop()
+    new_data = pd.DataFrame({
+        "이름": [name],
+        "더 심각하게 느껴진 표현": [choice],
+        "행동 변화 의향": [score]
+    })
+
+    file_name = "responses.csv"
+
+    if os.path.exists(file_name):
+        old_data = pd.read_csv(file_name)
+        data = pd.concat([old_data, new_data], ignore_index=True)
+    else:
+        data = new_data
+
+    data.to_csv(file_name, index=False, encoding="utf-8-sig")
+    st.success("응답이 제출되었습니다. 참여해주셔서 감사합니다!")
+
+st.markdown("---")
+st.subheader("📊 현재 응답 결과")
+
+if os.path.exists("responses.csv"):
+    data = pd.read_csv("responses.csv")
+
+    st.write("총 응답 수:", len(data))
+
+    count_data = data["더 심각하게 느껴진 표현"].value_counts()
+    st.bar_chart(count_data)
+
+    st.write("평균 행동 변화 의향:", round(data["행동 변화 의향"].mean(), 2))
+else:
+    st.write("아직 응답이 없습니다.")
